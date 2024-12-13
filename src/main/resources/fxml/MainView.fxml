@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<VBox fx:id="root" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controller.MainViewController"
+      spacing="20" alignment="TOP_CENTER">
+
+    <!-- Barre de navigation -->
+    <HBox fx:id="header" style="-fx-background-color: rgba(255, 255, 255, 0.9); -fx-padding: 10px; -fx-border-color: gray; -fx-border-width: 1px;"
+          alignment="CENTER">
+
+        <!-- Logo et nom de l'application -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <ImageView fx:id="logoImageView" fitWidth="40" fitHeight="40"/>
+            <Label text="Météo App" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+        </HBox>
+
+        <!-- Spacer -->
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Boutons de connexion -->
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button text="Sign In" onAction="#handleSignIn"/>
+            <Button text="Sign Up" onAction="#handleSignUp"/>
+        </HBox>
+    </HBox>
+
+
+
+    <HBox fx:id="searchBox" alignment="CENTER" spacing="10">
+        <TextField fx:id="searchField" promptText="Entrez le nom d'une ville"/>
+        <Button text="Rechercher" onAction="#handleSearch"/>
+    </HBox>
+
+    <VBox fx:id="weatherContent" alignment="TOP_CENTER" spacing="10">
+        <Label fx:id="weatherInfoLabel"/>
+    </VBox>
+
+    
+</VBox> 

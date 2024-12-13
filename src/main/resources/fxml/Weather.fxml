@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.BarChart?>
+<BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controller.WeatherController"
+            stylesheets="@../styles/weather.css">
+
+    <!-- Menu latéral à gauche -->
+    <left>
+        <VBox styleClass="side-menu">
+            <Button styleClass="menu-button" onAction="#onMenuButtonClick">
+                <graphic>
+                    <ImageView>
+                        <Image url="@../images/sun_Icon.png"/>
+                    </ImageView>
+                </graphic>
+                <text>Actuel</text>
+            </Button>
+
+            <Button styleClass="menu-button" onAction="#onMenuButtonClick">
+                <graphic>
+                    <ImageView>
+                        <Image url="@../images/Clock.jpg"/>
+                    </ImageView>
+                </graphic>
+                <text>Horaire</text>
+            </Button>
+
+            <Button styleClass="menu-button" onAction="#onMenuButtonClick">
+                <graphic>
+                    <ImageView>
+                        <Image url="@../images/details.png"/>
+                    </ImageView>
+                </graphic>
+                <text>Détails</text>
+            </Button>
+
+            <Button styleClass="menu-button" onAction="#onMenuButtonClick">
+                <graphic>
+                    <ImageView>
+                        <Image url="@../images/calendar.png"/>
+                    </ImageView>
+                </graphic>
+                <text>Mensuellement</text>
+            </Button>
+
+            <Button styleClass="menu-button" onAction="#handleProfileButton">
+                <graphic>
+                    <ImageView>
+                        <Image url="@../images/Profil_Icon.png"/>
+                    </ImageView>
+                </graphic>
+                <text>Profil</text>
+            </Button>
+
+            <!-- Section des villes préférées -->
+            <VBox fx:id="favoritesCitiesBox" styleClass="favorites-section">
+                <Label text="Villes préférées" styleClass="favorites-title"/>
+            </VBox>
+
+
+
+
+        </VBox>
+    </left>
+
+
+    <!-- Contenu principal -->
+    <center>
+        <ScrollPane fx:id="mainScrollPane" fitToWidth="true" styleClass="main-scroll-pane">
+            <VBox spacing="20" styleClass="main-content">
+                <!-- Barre de recherche -->
+                <HBox styleClass="search-box">
+                    <TextField fx:id="searchCityTextField" promptText="Rechercher une ville..."
+                               onKeyTyped="#onCitySearchInput"/>
+                    <Button text="Rechercher" onAction="#handleCitySearch"/>
+                </HBox>
+
+                <!-- Météo actuelle -->
+                <VBox fx:id="currentWeatherBox" styleClass="weather-box">
+                    <!-- En-tête avec date et condition -->
+                    <HBox styleClass="weather-header">
+                        <Label fx:id="dateLabel" styleClass="date-label"/>
+                        <Label fx:id="conditionLabel" styleClass="condition-label"/>
+                    </HBox>
+
+                    <!-- Contenu principal météo -->
+                    <HBox styleClass="weather-content">
+                        <ImageView fx:id="currentWeatherIcon" styleClass="weather-icon"/>
+                        <VBox styleClass="weather-info">
+                            <Label fx:id="currentTempLabel" styleClass="temp-label"/>
+                            <HBox styleClass="weather-details">
+                                <Label fx:id="humidityLabel" styleClass="detail-label"/>
+                                <Label fx:id="precipLabel" styleClass="detail-label"/>
+                                <Label fx:id="windLabel" styleClass="detail-label"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Onglets pour les graphiques -->
+
+                <TabPane>
+                    <tabs>
+                        <Tab text="Température">
+                            <content>
+                                <Pane fx:id="temperatureChartContainer" prefWidth="800" prefHeight="400" /> <!-- Ajoutez des dimensions -->
+                            </content>
+                        </Tab>
+                        <Tab text="Précipitations">
+                            <content>
+                                <Pane fx:id="rainChartContainer" prefWidth="800" prefHeight="400" />
+                            </content>
+                        </Tab>
+                        <Tab text="Vent">
+                            <content>
+                                <Pane fx:id="windChartContainer" prefWidth="800" prefHeight="400" />
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+                <!-- Prévisions horaires -->
+                <TitledPane fx:id="hourlyForecastPane" text="Prévisions horaires" expanded="false">
+                    <ScrollPane styleClass="forecast-scroll" fitToWidth="true">
+                        <content>
+                            <HBox fx:id="hourlyForecastBox" styleClass="hourly-forecast"/>
+                        </content>
+                    </ScrollPane>
+                </TitledPane>
+
+                <!-- Prévisions sur 5 jours -->
+                <TitledPane fx:id="fiveDayForecastPane" text="Prévisions 5 jours" expanded="false">
+                    <VBox fx:id="forecastWeatherBox" styleClass="forecast-box"/>
+                </TitledPane>
+
+                <!-- Après le TitledPane des prévisions 5 jours -->
+                <TitledPane text="Prévisions mensuelles" expanded="false">
+                    <VBox spacing="10">
+                        <GridPane fx:id="monthlyForecastGrid"
+                                  hgap="5"
+                                  vgap="5"
+                                  styleClass="monthly-calendar"
+                                  alignment="CENTER"/>
+                    </VBox>
+                </TitledPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Panneau latéral droit - Historique -->
+    <right>
+        <VBox fx:id="searchHistoryBox" styleClass="history-panel">
+            <Label text="Historique des recherches" styleClass="history-title"/>
+            <ScrollPane fitToWidth="true" styleClass="history-scroll">
+                <VBox fx:id="historyContent" styleClass="history-content"/>
+            </ScrollPane>
+        </VBox>
+    </right>
+
+</BorderPane>
