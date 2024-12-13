@@ -32,4 +32,12 @@ public class DBConnexion {
             con.close();
         }
     }
+    // Méthode pour obtenir la connexion avec la base memoire
+    public  Connection getContest(String URL, String User, String Password) throws SQLException {
+        if (con == null || con.isClosed()) {
+            con = DriverManager.getConnection(URL, User, Password);
+        }
+        return con;
+
+    }
 }
