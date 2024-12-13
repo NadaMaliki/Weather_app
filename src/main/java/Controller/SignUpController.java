@@ -1,9 +1,9 @@
 package Controller;
 
 
-import DAO.DatabaseManager;
-import DAO.DBConnexion;
-import DAO.UserPreferencesManager;
+import Dao.DatabaseManager;
+import Dao.DBConnexion;
+import Dao.UserPreferencesManager;
 import Model.User;
 
 import java.sql.SQLException;

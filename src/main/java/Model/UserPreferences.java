@@ -154,7 +154,7 @@ public class UserPreferences {
     }
 
     // Méthode pour ajouter une fav city
-    public boolean addFavoriteCity(String city) {
+    public boolean addFavoriteCity(int id, String city) {
         return dbManager.addFavoriteCity(this.userId, city);
     }
 

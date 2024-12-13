@@ -1,6 +1,6 @@
 package Controller;
 
-import DAO.DatabaseManager;
+import Dao.DatabaseManager;
 import Model.User;
 
 import java.sql.SQLException;

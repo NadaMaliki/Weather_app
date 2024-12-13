@@ -2,6 +2,7 @@ package Services.Graph;
 
 
 import Dao.DBConnexion;
+import Dao.GraphManager;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

@@ -1,8 +1,10 @@
 package Controller;
 
-import DAO.DatabaseManager;
-import DAO.UserPreferencesManager;
+import Dao.DatabaseManager;
+import Dao.UserPreferencesManager;
+import Model.Session;
 import Model.User;
+
 import Model.UserPreferences;
 
 import java.util.List;

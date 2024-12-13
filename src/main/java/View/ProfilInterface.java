@@ -1,5 +1,6 @@
 package View;
 import Controller.ProfilController;
+import Controller.WeatherController;
 import Model.Session;
 
 import Dao.DatabaseManager;
@@ -9,8 +10,10 @@ import Model.User;
 import Model.UserPreferences;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -21,6 +24,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ProfilInterface extends Application {

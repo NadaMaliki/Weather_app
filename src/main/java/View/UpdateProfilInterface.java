@@ -1,7 +1,8 @@
 package View;
 
-import DAO.DBConnexion;
-import DAO.DatabaseManager;
+import Dao.DBConnexion;
+import Dao.DatabaseManager;
+import Model.Session;
 import Model.User;
 import Model.UserPreferences;
 import javafx.application.Application;
@@ -11,12 +12,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
+import Controller.*;
 public class UpdateProfilInterface extends Application {
 
     private final DatabaseManager databaseManager = new DatabaseManager(new DBConnexion());
     private final UpdateProfilInterfaceController controller = new UpdateProfilInterfaceController(databaseManager);
-    private final UserPreferences preferences = new UserPreferences(new com.example.db_classes.DAO.UserPreferencesManager(new DBConnexion()));
+    private final UserPreferences preferences = new UserPreferences(new Dao.UserPreferencesManager(new DBConnexion()));
 
     @Override
     public void start(Stage primaryStage) {

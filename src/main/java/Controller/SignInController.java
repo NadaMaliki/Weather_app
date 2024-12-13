@@ -2,6 +2,7 @@ package Controller;
 
 import Dao.DatabaseManager;
 import Dao.DBConnexion;
+import Model.Session;
 import Model.User;
 
 import java.util.logging.Level;

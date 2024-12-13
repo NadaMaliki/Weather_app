@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.example.db_classes.DAO.UserPreferencesManager;
+import Dao.UserPreferencesManager;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalTime;

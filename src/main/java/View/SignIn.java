@@ -1,5 +1,7 @@
 package View;
 
+import Controller.SignInController;
+import Model.Session;
 import Model.User;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -12,17 +14,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import Services.Alert.AuthenticationService;
+
+import java.util.Objects;
 
 public class SignIn extends Application {
 
     private final SignInController controller = new SignInController();
-
+    AuthenticationService authService = new AuthenticationService();
     @Override
     public void start(Stage primaryStage) {
         int width = 800;
         int height = 600;
 
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/APS.png"));
+        Image backgroundImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/APS.png")));
         BackgroundImage bgImage = new BackgroundImage(
                 backgroundImage,
                 BackgroundRepeat.NO_REPEAT,

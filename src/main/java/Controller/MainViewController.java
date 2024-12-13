@@ -65,6 +65,7 @@ public class MainViewController {
     private void handleSignUp() {
         try {
             SignUp signUpPage = new SignUp();
+            System.out.println(signUpPage);
             signUpPage.start((Stage) root.getScene().getWindow());
         } catch (Exception ex) {
             showError("Erreur lors de l'ouverture de la page d'inscription");

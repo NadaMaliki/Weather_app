@@ -27,7 +27,10 @@ public class AlerteService {
 		EmailService emailservice;
 		NotificationService notificationservice;					
 
+	public AlerteService (){
 
+
+	}
 		
 		public AlerteService(DBConnexion dbConnexion, DatabaseManager dbManager, UserPreferencesManager userpreferences, WeatherApi weatherApi, EmailService emailservice, NotificationService notificationService, ScheduledExecutorService scheduler) { 
 			this.dbConnexion = dbConnexion; 
