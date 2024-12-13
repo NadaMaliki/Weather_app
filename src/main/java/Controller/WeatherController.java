@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import Model.UserPreferences;
-import Model.ProfilInterface;
+import View.ProfilInterface;
 import Services.Alert.AlerteService;
 import Services.Alert.NotificationService;
 import Services.Graph.*;

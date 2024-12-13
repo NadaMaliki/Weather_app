@@ -1,7 +1,7 @@
 package Controller;
 
-import Model.SignIn;
-import Model.SignUp;
+import View.SignIn;
+import View.SignUp;
 import Services.Api.GeolocationApi;
 import Services.Api.WeatherApi;
 import com.fasterxml.jackson.databind.JsonNode;
