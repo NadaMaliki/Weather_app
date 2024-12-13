@@ -78,7 +78,7 @@ public class NotificationService {
 
                 double averageTemperature = dbManager.getAverageTemperatureForDay(city);
                 double rainChance = dbManager.getRainChanceForToday(city);
-                double convertedTemperature = dbManager.convertTemperature(averageTemperature, unit);
+                double convertedTemperature = userpreferences.convertTemperature(averageTemperature, unit);
                 String convertedTemperatureStr = String.format("%.2f", convertedTemperature);
 
                 String message = String.format(
