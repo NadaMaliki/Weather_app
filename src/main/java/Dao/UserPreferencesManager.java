@@ -20,9 +20,17 @@ public class UserPreferencesManager {
     }
 
 
+    // Méthode publique pour obtenir la connexion avecla base du teste
+    public Connection getContest(String URL, String User, String Password) throws SQLException {
+        return dbConnexion.getContest(URL, User, Password); // Appel direct à la méthode dans DBConnexion
+    }
+
+
+
+    // les methodes d'user preferences class
     // Méthode pour récupérer la ville par défaut d'un utilisateur
     public String getDefaultCity(int userId) {
-
+        // Exemple de requête SQL
         String query = "SELECT Ville_par_defaut FROM preferences WHERE Id_utilisateur = ?";
         try (Connection conn = getCon(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, userId);
@@ -37,7 +45,7 @@ public class UserPreferencesManager {
     }
 
 
-    // Méthode pour modifier la ville par défaut d'un utilisateur
+
     public boolean editDefaultCity(int userId, String newCity) {
         String query = "UPDATE preferences SET Ville_par_defaut = ? WHERE Id_utilisateur = ?";
         try (PreparedStatement stmt = getCon().prepareStatement(query)) {
@@ -82,19 +90,17 @@ public class UserPreferencesManager {
             return false;
         }
     }
-
     // Méthode pour convertir les températures en fonction de l'unité
     public double convertTemperature(double temperatureInCelsius, String unit) {
         switch (unit) {
-            case "Kelvin":
+            case "°K":
                 return temperatureInCelsius + 273.15;
-            case "Fahrenheit":
+            case "°F":
                 return (temperatureInCelsius * 9 / 5) + 32;
             default:
                 return temperatureInCelsius; // Celsius par défaut
         }
     }
-
     // Méthode pour récupérer l'alerte
     public boolean getAlerte(int userId) {
         String query = "SELECT alerte FROM utilisateur WHERE Id = ?";
@@ -216,4 +222,9 @@ public class UserPreferencesManager {
         }
         return false;
     }
+
+
+
+
+
 }

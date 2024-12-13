@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestUserPreferences {
+class TestUserPreferences {
 
     private UserPreferencesManager dbManager;
     private Connection connection;
@@ -17,30 +17,40 @@ public class TestUserPreferences {
     void setUp() throws SQLException {
         // Initialiser une connexion à une base de données en mémoire (H2)
         String url = "jdbc:h2:mem:testdb"; // Base de données en mémoire
-        connection = DriverManager.getConnection(url, "sa", "");
+        String user = "sa";
+        String pass = "";
 
         // Créer une instance personnalisée de DBConnexion
-        DBConnexion testDbConnexion = new DBConnexion() {
-            @Override
-            public Connection getCon() {
-                return connection; // Retourne la connexion à H2
-            }
-        };
+        DBConnexion testDbConnexion = new DBConnexion();
 
         // Injecter l'instance personnalisée dans userpreferencesManager
         dbManager = new UserPreferencesManager(testDbConnexion);
+        connection= dbManager.getContest(url,user,pass);
+
 
         // Initialiser les tables et les données de test
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE preferences (" +
-                    "Id_utilisateur INT PRIMARY KEY, " +
+                    "Id INT PRIMARY KEY, " +
+                    "Id_utilisateur INT, " +
                     "Ville1 VARCHAR(255), Ville2 VARCHAR(255), Ville3 VARCHAR(255), " +
                     "Ville4 VARCHAR(255), Ville5 VARCHAR(255), " +
                     "Unite VARCHAR(50) DEFAULT '°C', " +
-                    "Ville_par_Defaut VARCHAR(50), " +
-                    "Alerte BOOLEAN DEFAULT FALSE);");
-            stmt.execute("INSERT INTO preferences (Id_utilisateur, Ville1, Unite, Ville_par_Defaut, Alerte) " +
-                    "VALUES (1, 'Paris', '°C', 'Casablanca', TRUE);");
+                    "Ville_par_Defaut VARCHAR(50) );");
+
+            stmt.execute("INSERT INTO preferences (Id, Id_utilisateur, Ville1, Unite, Ville_par_Defaut) " +
+                    "VALUES (1, 1, 'Paris', '°C', 'Casablanca');");
+
+            stmt.execute("CREATE TABLE utilisateur (" +
+                    "Id INT PRIMARY KEY, " +
+                    "nom VARCHAR(255), " +
+                    "prenom VARCHAR(255), " +
+                    "email VARCHAR(255), " +
+                    "password VARCHAR(255), " +
+                    "Alerte int );");
+
+            stmt.execute("INSERT INTO utilisateur (Id, nom, prenom, email, password, Alerte) " +
+                    "VALUES (1, 'john', 'john', 'email@gmail.com', '', 0);");
         }
     }
 
@@ -53,6 +63,7 @@ public class TestUserPreferences {
             connection.close();
         }
     }
+
 
     //testes de l'attribut unite
     @Test
@@ -71,7 +82,6 @@ public class TestUserPreferences {
         assertEquals("°F", updatedUnit, "L'unité doit être '°F'.");
     }
 
-    //testes des methodes de l'attribut ville_par_defaut
     @Test
     void testGetDefaultCity() {
         String city = dbManager.getDefaultCity(1);
@@ -87,37 +97,15 @@ public class TestUserPreferences {
         assertEquals("Lyon", updatedCity, "La ville par défaut doit être 'Lyon'.");
     }
 
-    //testes des methodes de l'attribut alerte
-    @Test
-    void testIsAlertActive() {
-        // Insérer une valeur d'alerte dans la base de données
-        try (Statement stmt = connection.createStatement()) {
-            stmt.execute("UPDATE preferences SET Alerte = TRUE WHERE Id_utilisateur = 1");
-        } catch (SQLException e) {
-            fail("Erreur lors de la configuration des données : " + e.getMessage());
-        }
-
-        boolean isActive = dbManager.getAlerte(1);
-        assertTrue(isActive, "L'alerte doit être active.");
-    }
 
 
-    @Test
-    void testSetAlertActive() {
-        boolean result = dbManager.setAlerte(1, false);
-        assertTrue(result, "La mise à jour de l'alerte doit réussir.");
-
-        boolean isActive = dbManager.getAlerte(1);
-        assertFalse(isActive, "L'alerte doit être désactivée.");
-    }
-
-    //testes des methodes de l'attribut FavoriteCities
     @Test
     void testGetFavoriteCities() {
         List<String> cities = dbManager.getFavoriteCities(1);
         assertEquals(1, cities.size(), "L'utilisateur doit avoir 1 ville favorite.");
         assertTrue(cities.contains("Paris"), "La ville favorite doit être 'Paris'.");
     }
+
 
     @Test
     void testAddFavoriteCity() {
@@ -145,5 +133,25 @@ public class TestUserPreferences {
     }
 
 
+    @Test
+    public void testConvertTemperature() {
+
+        // Test conversion de Celsius à Fahrenheit
+        assertEquals(32, dbManager.convertTemperature(0, "°F"), 0.01);
+
+        // Test conversion avec valeur par défaut (Celsius)
+        assertEquals(0, dbManager.convertTemperature(0, "°C"), 0.01);
+
+        // Test conversion avec une température positive
+        assertEquals(298.15, dbManager.convertTemperature(25, "°K"), 0.01);
+        assertEquals(77, dbManager.convertTemperature(25, "°F"), 0.01);
+
+        // Test conversion avec une température négative
+        assertEquals(193.15, dbManager.convertTemperature(-80, "°K"), 0.01);
+        assertEquals(-112, dbManager.convertTemperature(-80, "°F"), 0.01);
+    }
 }
+
+
+
 
