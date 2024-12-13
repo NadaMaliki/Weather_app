@@ -15,6 +15,23 @@ public class User {
    private String password; 
    private int alerte;
    
+   // Constructeur sans id (pour les nouveaux utilisateurs)
+   public User(String username, String nom, String prenom, String email, String password) {
+
+       this.nom = nom;
+       this.prenom = prenom;
+       this.email = email;
+       this.password = password;
+   }
+
+   public User(int id, String nom, String prenom, String email, String password) {
+       this.id = id;
+       this.nom = nom;
+       this.prenom = prenom;
+       this.email = email;
+       this.password = password;
+       }
+   
 
    public User(int id, String nom, String prenom, String email, String password, int alerte, int preferencesId, int historiqueId) {
        this.setId(id);
@@ -26,9 +43,13 @@ public class User {
 
    }
    
-   public User(int i) {
-       this.setId(i);
+   public User(int id) {
    }
+   
+   
+//   public User(int i) {
+//       this.setId(i);
+//   }
 
 	public int getId() {
 		return id;
@@ -70,13 +91,15 @@ public class User {
 		this.password = password;
 	}
 
-	public int getAlerte() {
-		return alerte;
-	}
-
 	public void setAlerte(int alerte) {
 		this.alerte = alerte;
 	}
+	
+	public int isAlerte() {
+        return alerte;
+    }
+
+
    
 
 }
