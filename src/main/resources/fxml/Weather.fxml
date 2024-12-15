@@ -3,10 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.BarChart?>
+
 <BorderPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controller.WeatherController"
             stylesheets="@../styles/weather.css">
@@ -156,11 +153,21 @@
     <!-- Panneau latéral droit - Historique -->
     <right>
         <VBox fx:id="searchHistoryBox" styleClass="history-panel">
+            <!-- Titre fixe en haut -->
             <Label text="Historique des recherches" styleClass="history-title"/>
+
+            <!-- Contenu défilant avec historique des villes -->
             <ScrollPane fitToWidth="true" styleClass="history-scroll">
+                <!-- L'élément VBox qui contiendra l'historique des recherches -->
                 <VBox fx:id="historyContent" styleClass="history-content"/>
             </ScrollPane>
         </VBox>
+
+
+
     </right>
+
+
+
 
 </BorderPane>

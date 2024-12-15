@@ -4,8 +4,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import Dao.DBConnexion;
-
 public class UserPreferencesManager {
     private final DBConnexion dbConnexion;
 
@@ -170,7 +168,7 @@ public class UserPreferencesManager {
         return false;
     }
 
-    // Méthode pour editer une ville preferee
+
     public boolean updateFavoriteCity(int userId, int index, String updatedCity) {
         if (index < 1 || index > 5) {
             return false; // Index hors limites

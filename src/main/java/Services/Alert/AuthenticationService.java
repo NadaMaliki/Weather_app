@@ -94,7 +94,11 @@ public class AuthenticationService {
                 throw new RuntimeException("Le contrôleur Weather n'a pas pu être chargé");
             }
 
-            controller.setUserId(userId);
+            try {
+                controller.setUserId(userId);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             controller.initialize();
             controller.initializeWithPreferences(locationPermissionGranted, preferencesManager);
 

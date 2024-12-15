@@ -25,6 +25,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ProfilInterface extends Application {
@@ -73,10 +74,13 @@ public class ProfilInterface extends Application {
                 UserPreferencesManager userpreferences = new UserPreferencesManager(dbConnexion);
 
 
-                // Récupérer le contrôleur et initialiser l'userId
                 WeatherController controller = loader.getController();
                 System.out.println(Session.getCurrentUser().getId());
-                controller.setUserId(Session.getCurrentUser().getId());
+                try {
+                    controller.setUserId(Session.getCurrentUser().getId());
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
                 controller.displayWeatherDetailsForCity(userpreferences.getDefaultCity(Session.getCurrentUser().getId()));
                 controller.displayGraphManager.displayWeatherGraphs(userpreferences.getDefaultCity(Session.getCurrentUser().getId()));
 

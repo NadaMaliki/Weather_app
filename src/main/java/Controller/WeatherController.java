@@ -6,10 +6,10 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import Model.UserPreferences;
+import Services.Alert.EmailService;
 import View.ProfilInterface;
 import Services.Alert.AlerteService;
 import Services.Alert.NotificationService;
@@ -40,89 +40,154 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class WeatherController {
-
-
-
-
+    // FXML Components
+    @FXML private VBox historyContent;
     @FXML private VBox currentWeatherBox;
     @FXML private Label currentTempLabel;
     @FXML private Label currentConditionLabel;
     @FXML private ImageView currentWeatherIcon;
-    private String currentCity;
     @FXML private VBox forecastWeatherBox;
     @FXML private VBox searchHistoryBox; // VBox to display search history
     @FXML private TextField searchCityTextField; // Field for city search
     @FXML private HBox hourlyForecastBox; // VBox to display hourly forecast
 
-
-
-
-    private WeatherApi weatherApi = new WeatherApi(); // Weather API instance
-    private SearchHistory searchHistory; // Search history instance
+    private DBConnexion dbConnexion;
+    private String currentCity;
+    private WeatherApi weatherApi;
+    private SearchHistory searchHistory;
+    private DatabaseManager databaseManager;
+    private UserPreferencesManager preferencesManager;
+    private UserPreferences userPreferences;
+    public DisplayGraphManager displayGraphManager;
+    private AlerteService alerteService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = Logger.getLogger(WeatherController.class.getName());
-
-
     public int userId;
-    private DatabaseManager databaseManager;
-    public void setUserId(int userId) {
-        this.userId = userId;
 
+    // Constructor
+    public WeatherController() {
+        DBConnexion dbConnexion = new DBConnexion();
+        this.databaseManager = new DatabaseManager(dbConnexion);
+        this.searchHistory = new SearchHistory(userId, databaseManager);
+        this.weatherApi = new WeatherApi();
+    }
+
+    // Setters
+    public void setUserId(int userId) throws SQLException {
+        this.userId = userId;
+        this.dbConnexion = new DBConnexion();
+
+        // Initialiser les dépendances
+        this.databaseManager = new DatabaseManager(this.dbConnexion);
+        this.preferencesManager = new UserPreferencesManager(dbConnexion);
+        this.userPreferences = new UserPreferences(userId, dbConnexion);
+        this.weatherApi = new WeatherApi();
+        this.searchHistory = new SearchHistory(userId, this.databaseManager);
+
+        // Initialiser AlerteService
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        EmailService emailService = new EmailService(dbConnexion);
+        NotificationService notificationService = new NotificationService(dbConnexion);
+        this.alerteService = new AlerteService(
+                dbConnexion, databaseManager, preferencesManager, weatherApi, emailService, notificationService, scheduler
+        );
+
+        // Charger les préférences utilisateur et initialiser les graphiques
         loadUserPreferences();
-        // Réinitialiser le DisplayGraphManager avec le nouveau userId
-        displayGraphManager = new DisplayGraphManager(
+        initializeDisplayGraphManager();
+
+        logger.info("Utilisateur ID : " + userId);
+    }
+
+    // Vérifier la connexion à la base de données
+    public boolean isDbConnexionValid() {
+        try {
+            return dbConnexion != null && !dbConnexion.getCon().isClosed();
+        } catch (SQLException e) {
+            logger.severe("Erreur lors de la vérification de la connexion : " + e.getMessage());
+            return false;
+        }
+    }
+
+    public void executeUserAlerts() {
+        try {
+            if (alerteService != null) {
+                // Vérifier et envoyer des alertes météo
+                alerteService.checkAndSendWeatherAlert(userId);
+
+                // Afficher les alertes quotidiennes de l'utilisateur
+                alerteService.afficherDailyAlerteUtilisateur(userId);
+
+                logger.info("Alertes utilisateur exécutées avec succès.");
+            } else {
+                logger.warning("AlerteService non initialisé !");
+            }
+        } catch (Exception e) {
+            logger.severe("Erreur lors de l'exécution des alertes : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    public void initialize() {
+        logger.info("WeatherController initialisé.");
+        try {
+            executeUserAlerts();
+        } catch (Exception e) {
+            logger.severe("Erreur lors de l'exécution des alertes à l'initialisation : " + e.getMessage());
+        }
+    }
+
+
+    private void loadUserPreferences() {
+        try {
+            if (!isDbConnexionValid()) {
+                logger.severe("La connexion à la base de données est invalide ou non initialisée.");
+                return;
+            }
+            preferencesManager = new UserPreferencesManager(dbConnexion);
+            userPreferences = new UserPreferences(userId, dbConnexion);
+            loadFavoriteCities();
+            logger.info("Préférences utilisateur chargées avec succès.");
+        } catch (SQLException sqlEx) {
+            logger.severe("Erreur SQL : " + sqlEx.getMessage());
+        } catch (Exception e) {
+            logger.severe("Erreur lors du chargement des préférences : " + e.getMessage());
+        }
+    }
+
+    private void initializeDisplayGraphManager() {
+        this.displayGraphManager = new DisplayGraphManager(
                 temperatureChartContainer,
                 rainChartContainer,
                 windChartContainer,
                 userId
         );
-        searchHistory = new SearchHistory(userId, databaseManager);
+    }
 
-
-        logger.info("Utilisateur ID : " + userId);
-    }
-    private void loadUserPreferences() {
-        try {
-            DBConnexion dbConnexion = new DBConnexion();
-            preferencesManager = new UserPreferencesManager(dbConnexion);
-            userPreferences = new UserPreferences(userId, dbConnexion);
-            loadFavoriteCities();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Erreur lors du chargement des préférences: " + e.getMessage());
-        }
-    }
-    public WeatherController() {
-        DBConnexion dbConnexion = new DBConnexion(); // If DBConnexion requires parameters, provide them
-        databaseManager = new DatabaseManager(dbConnexion); // Pass DBConnexion to DatabaseManager
-        searchHistory = new SearchHistory(userId, databaseManager); // Initialize search history
-    }
 
 
     @FXML
     public void onCitySearchInput() {
-        String searchInput = searchCityTextField.getText().trim(); // Récupère le texte saisi par l'utilisateur
+        String searchInput = searchCityTextField.getText().trim();
 
         try {
-
             List<String> history = searchHistory.getHistory();
 
-            // Limiter à 5 derniers éléments
+            // Limiter la taille de l'historique
             int maxHistorySize = 5;
             if (history.size() > maxHistorySize) {
                 history = history.subList(history.size() - maxHistorySize, history.size());
             }
 
+            // Filtrer les villes selon l'entrée de recherche
             if (!searchInput.isEmpty()) {
-                // Filtrer l'historique pour n'afficher que les villes qui commencent par la saisie
                 List<String> filteredHistory = history.stream()
                         .filter(city -> city.toLowerCase().startsWith(searchInput.toLowerCase()))
                         .collect(Collectors.toList());
 
-                updateSearchHistoryDisplay(filteredHistory); // Afficher l'historique filtré
+                updateSearchHistoryDisplay(filteredHistory);
             } else {
-                // Si rien n'est saisi, afficher l'historique limité
-                updateSearchHistoryDisplay(history); // Afficher l'historique limité à 5
+                updateSearchHistoryDisplay(history);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,16 +196,17 @@ public class WeatherController {
     }
 
     public void updateSearchHistoryDisplay(List<String> history) {
-        searchHistoryBox.getChildren().clear(); // Efface l'affichage précédent
+        // Efface l'affichage précédent de l'historique
+        historyContent.getChildren().clear();
 
         // Si l'historique est vide, afficher un message
         if (history.isEmpty()) {
             Label emptyHistoryLabel = new Label("Aucune ville dans l'historique.");
-            searchHistoryBox.getChildren().add(emptyHistoryLabel);
+            historyContent.getChildren().add(emptyHistoryLabel);
             return;
         }
 
-
+        // Ajouter les villes sous forme de boutons
         for (String city : history) {
             Button cityButton = new Button(city);
             cityButton.setOnAction(event -> {
@@ -151,10 +217,13 @@ public class WeatherController {
             cityButton.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10; -fx-font-size: 14; -fx-text-fill: #333; -fx-border-color: #ccc; -fx-border-radius: 5;");
             cityButton.setMaxWidth(Double.MAX_VALUE);
 
+            // Ajouter le bouton au conteneur d'historique
+            historyContent.getChildren().add(cityButton);
 
-            searchHistoryBox.getChildren().add(cityButton);
         }
     }
+
+
     public void handleCitySearchFromHistory(String city) {
 
         searchCityTextField.setText(city);
@@ -411,6 +480,7 @@ public class WeatherController {
                 imagePath = "/images/Tonnerre_Clair.jpg";
                 break;
             case "snow":
+            case "light snow":
                 imagePath = "/images/snow.jpg";
                 break;
             case "cloudy":
@@ -509,16 +579,14 @@ public class WeatherController {
     @FXML
 
     private VBox favoritesCitiesBox;
-    private UserPreferences userPreferences;
-    private UserPreferencesManager preferencesManager;
-    public DisplayGraphManager displayGraphManager;
+
 
     public void displayWeatherDetailsForCity(String city) {
         logger.info("Affichage des détails météo pour la ville : " + city);
         displayCurrentWeather(city); // Affiche la météo actuelle
         displayWeatherForecast(city); // Affiche les prévisions météo
         displayWeatherHourly(city);
-        //displayGraphManager.displayWeatherGraphs(city);
+
 
     }
 
@@ -670,14 +738,14 @@ public class WeatherController {
                 // Date
                 Label dateLabel = new Label(String.valueOf(date.getDayOfMonth()));
 
-                // Icône météo et températures (simulées ici)
-                String iconUrl = "https://path-to-icon.com/icon.png"; // Remplacez par l'icône réelle
+
+                String iconUrl = "https://path-to-icon.com/icon.png";
                 ImageView weatherIcon = new ImageView(new Image(iconUrl));
                 weatherIcon.setFitWidth(40);
                 weatherIcon.setFitHeight(40);
 
-                double maxTemp = Math.random() * 10 + 20; // Simuler une température max
-                double minTemp = Math.random() * 10 + 10; // Simuler une température min
+                double maxTemp = Math.random() * 10 + 20;
+                double minTemp = Math.random() * 10 + 10;
 
                 VBox tempBox = new VBox(2);
                 tempBox.setAlignment(Pos.CENTER);
@@ -715,48 +783,6 @@ public class WeatherController {
     private NotificationService notificationService;
     @FXML
     private TextField citySearchField;
-
-    @FXML
-    public void initialize() {
-        try {
-            System.out.println("Initialisation des conteneurs de graphiques");
-
-            // Vérifier si les conteneurs sont bien injectés
-            System.out.println("temperatureChartContainer: " + (temperatureChartContainer != null));
-            System.out.println("rainChartContainer: " + (rainChartContainer != null));
-            System.out.println("windChartContainer: " + (windChartContainer != null));
-
-            // Initialiser le DisplayGraphManager
-            displayGraphManager = new DisplayGraphManager(
-                    temperatureChartContainer,
-                    rainChartContainer,
-                    windChartContainer,
-                    userId
-            );
-
-
-        } catch (Exception e) {
-            System.err.println("Erreur dans initialize: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-
-        try {
-            Thread.sleep(5000);
-            AlerteService alerteservice = new AlerteService();
-            System.out.println("Vérification des alertes météo...");
-            alerteservice.checkAndSendWeatherAlert(userId);
-            alerteservice.afficherDailyAlerteUtilisateur(userId);
-
-        } catch (Exception e) {
-            System.err.println("Erreur d'initialisation: " + e.getMessage());
-        }
-    }
-
-
-
-
-
 
 
 
@@ -836,35 +862,45 @@ public class WeatherController {
             logger.warning("Erreur lors de la mise à jour de l'historique : " + e.getMessage());
         }
     }
-
-
-
     private void loadFavoriteCities() {
         try {
-            favoritesCitiesBox.getChildren().clear();
-            List<String> favoriteCities = userPreferences.getFavoriteCities(userId);
-
-            logger.info("Chargement des villes favorites pour l'utilisateur " + userId);
-
-            // Ajouter les villes existantes
-            for (int i = 0; i < favoriteCities.size() && i < 5; i++) {
-                String city = favoriteCities.get(i);
-                if (city != null && !city.trim().isEmpty()) {
-                    HBox cityItem = createCityItem(city, i + 1);
-                    favoritesCitiesBox.getChildren().add(cityItem);
-                }
+            if (userPreferences == null) {
+                logger.severe("userPreferences n'est pas initialisé. Impossible de charger les villes favorites.");
+                showError("Les préférences utilisateur ne sont pas disponibles.");
+                return;
             }
 
-            // Ajouter le bouton d'ajout si moins de 5 villes
-            if (favoriteCities.size() < 5) {
+            // Nettoyer le conteneur des villes favorites avant d'ajouter les nouvelles
+            favoritesCitiesBox.getChildren().clear();
+
+            // Récupérer la liste des villes favorites de l'utilisateur
+            List<String> favoriteCities = userPreferences.getFavoriteCities(userId);
+
+            logger.info("Chargement des villes favorites pour l'utilisateur ID: " + userId);
+
+            // Ajouter les villes favorites existantes
+            if (favoriteCities != null && !favoriteCities.isEmpty()) {
+                for (int i = 0; i < favoriteCities.size() && i < 5; i++) {
+                    String city = favoriteCities.get(i);
+                    if (city != null && !city.trim().isEmpty()) {
+                        HBox cityItem = createCityItem(city, i + 1);
+                        favoritesCitiesBox.getChildren().add(cityItem);
+                    }
+                }
+            } else {
+                logger.warning("Aucune ville favorite trouvée pour l'utilisateur ID: " + userId);
+            }
+
+            // Ajouter un bouton pour permettre l'ajout d'une ville favorite si moins de 5 villes
+            if (favoriteCities == null || favoriteCities.size() < 5) {
                 Button addButton = new Button("+ Ajouter une ville");
                 addButton.getStyleClass().add("add-city-button");
                 addButton.setOnAction(e -> handleAddFavoriteCity());
                 favoritesCitiesBox.getChildren().add(addButton);
             }
         } catch (Exception e) {
-            logger.severe("Erreur lors du chargement des villes favorites: " + e.getMessage());
-            showError("Erreur lors du chargement des villes favorites");
+            logger.severe("Erreur inattendue lors du chargement des villes favorites: " + e.getMessage());
+            showError("Erreur lors du chargement des villes favorites.");
         }
     }
 
@@ -884,7 +920,6 @@ public class WeatherController {
             searchCityTextField.setText(city);
             displayWeatherDetailsForCity(city);
             displayGraphManager.displayWeatherGraphs(city);
-
         });
 
         // Bouton modifier
@@ -900,6 +935,7 @@ public class WeatherController {
         cityItem.getChildren().addAll(cityButton, editButton, removeButton);
         return cityItem;
     }
+
     private void handleAddFavoriteCity() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Ajouter une ville");
@@ -907,18 +943,26 @@ public class WeatherController {
         dialog.setContentText("Nom de la ville:");
 
         dialog.showAndWait().ifPresent(city -> {
-            if (!city.isEmpty()) {
+            logger.info("Tentative d'ajout de la ville: " + city); // Log de la ville saisie
+            if (city != null && !city.trim().isEmpty()) {
                 try {
-                    if (userPreferences.addFavoriteCity(userId, city)) {
-                        loadFavoriteCities(); // Recharger la liste
-                        logger.info("Ville ajoutée avec succès: " + city);
+                    List<String> favoriteCities = userPreferences.getFavoriteCities(userId);
+                    if (favoriteCities != null && favoriteCities.contains(city)) {
+                        showError("Cette ville est déjà dans vos villes favorites.");
                     } else {
-                        showError("Erreur lors de l'ajout de la ville");
+                        if (userPreferences.addFavoriteCity(userId, city)) {
+                            loadFavoriteCities(); // Recharger la liste
+                            logger.info("Ville ajoutée avec succès: " + city);
+                        } else {
+                            showError("Erreur lors de l'ajout de la ville.");
+                        }
                     }
                 } catch (Exception e) {
                     logger.severe("Erreur lors de l'ajout: " + e.getMessage());
-                    showError("Erreur lors de l'ajout de la ville");
+                    showError("Erreur lors de l'ajout de la ville.");
                 }
+            } else {
+                showError("Le nom de la ville ne peut pas être vide.");
             }
         });
     }
@@ -930,18 +974,25 @@ public class WeatherController {
         dialog.setContentText("Nouvelle ville:");
 
         dialog.showAndWait().ifPresent(newCity -> {
-            if (!newCity.isEmpty()) {
+            if (newCity != null && !newCity.trim().isEmpty()) {
                 try {
-                    if (userPreferences.editFavoriteCity(index, newCity)) {
-                        loadFavoriteCities(); // Recharger la liste
-                        logger.info("Ville modifiée avec succès");
+                    List<String> favoriteCities = userPreferences.getFavoriteCities(userId);
+                    if (favoriteCities != null && favoriteCities.contains(newCity)) {
+                        showError("Cette ville est déjà dans vos villes favorites.");
                     } else {
-                        showError("Erreur lors de la modification de la ville");
+                        if (userPreferences.editFavoriteCity(index, newCity)) {
+                            loadFavoriteCities(); // Recharger la liste
+                            logger.info("Ville modifiée avec succès");
+                        } else {
+                            showError("Erreur lors de la modification de la ville.");
+                        }
                     }
                 } catch (Exception e) {
                     logger.severe("Erreur lors de la modification: " + e.getMessage());
-                    showError("Erreur lors de la modification de la ville");
+                    showError("Erreur lors de la modification de la ville.");
                 }
+            } else {
+                showError("Le nom de la ville ne peut pas être vide.");
             }
         });
     }
@@ -959,23 +1010,25 @@ public class WeatherController {
                         loadFavoriteCities(); // Recharger la liste
                         logger.info("Ville supprimée avec succès");
                     } else {
-                        showError("Erreur lors de la suppression de la ville");
+                        showError("Erreur lors de la suppression de la ville.");
                     }
                 } catch (Exception e) {
                     logger.severe("Erreur lors de la suppression: " + e.getMessage());
-                    showError("Erreur lors de la suppression de la ville");
+                    showError("Erreur lors de la suppression de la ville.");
                 }
             }
         });
     }
+
     private void showError(String message) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setContentText(message);
-            alert.showAndWait();
-        });
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erreur");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
+
+
 }
 
 

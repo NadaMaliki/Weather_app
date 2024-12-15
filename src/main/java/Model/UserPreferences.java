@@ -162,6 +162,7 @@ public class UserPreferences {
     public boolean editFavoriteCity(int index, String city) {
         return dbManager.updateFavoriteCity(this.userId, index, city);
     }
+    
 
     // Méthode pour modifier une fav city
     public boolean removeFavoriteCity(int index) {

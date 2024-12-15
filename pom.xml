@@ -1,27 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
-  <groupId>project</groupId>
-  <artifactId>weather_app</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
-  <name>weather_app</name>
-  <url>http://www.example.com</url>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-  </properties>
-
-
-
-
-<build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>project</groupId>
+    <artifactId>weather_app</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>weather_app</name>
+    <url>http://www.example.com</url>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    <build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -57,9 +47,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
                 <configuration>
-                    <argLine>
-                        -Djdk.instrument.traceUsage
-                    </argLine>
+                    <argLine> -Djdk.instrument.traceUsage </argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -72,55 +60,52 @@
             </plugin>
         </plugins>
     </build>
-
-
-<dependencies>
-        <!--   JavaFX Dependency   -->
-        <!--   https://mvnrepository.com/artifact/org.openjfx/javafx-fxml   -->
+    <dependencies>
+        <!--    JavaFX Dependency    -->
+        <!--    https://mvnrepository.com/artifact/org.openjfx/javafx-fxml    -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>24-ea+15</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/org.openjfx/javafx-base   -->
+        <!--    https://mvnrepository.com/artifact/org.openjfx/javafx-base    -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>24-ea+15</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/org.openjfx/javafx-graphics   -->
+        <!--    https://mvnrepository.com/artifact/org.openjfx/javafx-graphics    -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>24-ea+15</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/org.openjfx/javafx-controls   -->
+        <!--    https://mvnrepository.com/artifact/org.openjfx/javafx-controls    -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>24-ea+15</version>
         </dependency>
-
-        <!--   Jackson dependencies for JSON processing   -->
-        <!--   https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind   -->
+        <!--    Jackson dependencies for JSON processing    -->
+        <!--    https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind    -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.18.1</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310   -->
+        <!--    https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310    -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.18.1</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core   -->
+        <!--    https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core    -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>2.18.1</version>
         </dependency>
-        <!--  https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations  -->
+        <!--   https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations   -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
@@ -131,69 +116,65 @@
             <artifactId>jackson-module-parameter-names</artifactId>
             <version>2.18.1</version>
         </dependency>
-
-
-        <!--   Gson Dependency   -->
+        <!--    Gson Dependency    -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.11.0</version>
         </dependency>
-        <!--  https://mvnrepository.com/artifact/org.json/json  -->
+        <!--   https://mvnrepository.com/artifact/org.json/json   -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20240303</version>
         </dependency>
-        <!--   MySQL Connector Dependency   -->
+        <!--    MySQL Connector Dependency    -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/org.projectlombok/lombok   -->
+        <!--    https://mvnrepository.com/artifact/org.projectlombok/lombok    -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.34</version>
             <scope>provided</scope>
         </dependency>
-
-        <!--   https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api   -->
-        <!--   https://mvnrepository.com/artifact/org.eclipse.angus/jakarta.mail   -->
+        <!--    https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api    -->
+        <!--    https://mvnrepository.com/artifact/org.eclipse.angus/jakarta.mail    -->
         <dependency>
             <groupId>org.eclipse.angus</groupId>
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api   -->
+        <!--    https://mvnrepository.com/artifact/jakarta.activation/jakarta.activation-api    -->
         <dependency>
             <groupId>jakarta.activation</groupId>
             <artifactId>jakarta.activation-api</artifactId>
             <version>2.0.1</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api   -->
+        <!--    https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api    -->
         <dependency>
             <groupId>jakarta.mail</groupId>
             <artifactId>jakarta.mail-api</artifactId>
             <version>2.0.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.sun.mail/jakarta.mail -->
+        <!--  https://mvnrepository.com/artifact/com.sun.mail/jakarta.mail  -->
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
         </dependency>
-
-        <!--   JUnit dependencies   -->
-        <!--   https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api   -->
+        <!--    JUnit dependencies    -->
+        <!--    https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api    -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.11.3</version>
             <scope>test</scope>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine   -->
+        <!--    https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine    -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -206,13 +187,12 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/at.favre.lib/bcrypt   -->
+        <!--    https://mvnrepository.com/artifact/at.favre.lib/bcrypt    -->
         <dependency>
             <groupId>at.favre.lib</groupId>
             <artifactId>bcrypt</artifactId>
@@ -228,60 +208,51 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.11</version>
         </dependency>
-
-
-        <!--   https://mvnrepository.com/artifact/org.mockito/mockito-inline   -->
+        <!--    https://mvnrepository.com/artifact/org.mockito/mockito-inline    -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/org.mockito/mockito-core   -->
+        <!--    https://mvnrepository.com/artifact/org.mockito/mockito-core    -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>5.14.2</version>
             <scope>test</scope>
         </dependency>
-
-        <!--   https://mvnrepository.com/artifact/com.h2database/h2   -->
+        <!--    https://mvnrepository.com/artifact/com.h2database/h2    -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.3.232</version>
             <scope>test</scope>
         </dependency>
-
-        <!--   https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4   -->
+        <!--    https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4    -->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <version>2.0.9</version>
             <scope>test</scope>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2   -->
+        <!--    https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2    -->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito2</artifactId>
             <version>2.0.9</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
             <version>1.5.3</version>
         </dependency>
-        <!--   https://mvnrepository.com/artifact/org.postgresql/postgresql   -->
+        <!--    https://mvnrepository.com/artifact/org.postgresql/postgresql    -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.2.24</version>
         </dependency>
-
-
     </dependencies>
-    
-  
 </project>

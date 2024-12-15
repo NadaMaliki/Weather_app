@@ -101,14 +101,22 @@ public class DatabaseManager {
         return userId; // Retourne l'ID généré ou -1 si l'insertion a échoué
     }
 
-
-    public User getUserById(int id) throws SQLException {
+    public User getUserById(int id) {
         User user = null;
         try (Connection conn = DBConnexion.getCon();
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM utilisateur WHERE Id = ?")) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
+
+            // Vérifiez si la connexion est valide
+            if (conn == null || conn.isClosed()) {
+                System.err.println("La connexion est nulle ou fermée.");
+                return null;
+            }
+
+            stmt.setInt(1, id); // On passe l'ID en paramètre à la requête
+            ResultSet rs = stmt.executeQuery(); // Exécution de la requête
+
+            // Vérifiez que le ResultSet contient des données
+            if (rs != null && rs.next()) {
                 user = new User(
                         rs.getInt("Id"),
                         rs.getString("Nom"),
@@ -117,8 +125,18 @@ public class DatabaseManager {
                         rs.getString("password"),
                         rs.getInt("Alerte")
                 );
+            } else {
+                System.err.println("Aucun utilisateur trouvé avec l'ID: " + id);
             }
+
+            // Fermez explicitement le ResultSet pour éviter les fuites de ressources
+            rs.close();
+
+        } catch (SQLException e) {
+            System.err.println("Erreur SQL : " + e.getMessage());
+            e.printStackTrace(); // Affichage détaillé de l'erreur pour le débogage
         }
+
         return user;
     }
 
