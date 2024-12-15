@@ -21,7 +21,7 @@ public class DBConnexion {
     public static Connection getCon() throws SQLException {
         if (con == null || con.isClosed()) {
             con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            con.setAutoCommit(false);  // Désactiver le mode autocommit pour les transactions
+           // con.setAutoCommit(false);  // Désactiver le mode autocommit pour les transactions
         }
         return con;
     }

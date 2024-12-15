@@ -210,6 +210,7 @@ public class ProfilInterface extends Application {
             defaultCityTextField.setVisible(true);
             btnDefaultCityOk.setVisible(true);
             defaultCityTextField.setText(defaultCity);
+            
         });
 
         defaultCityRow.getChildren().addAll(defaultCityText, defaultCityTextField, btnDefaultCityOk, btnDefaultCityModifier);
@@ -243,6 +244,9 @@ public class ProfilInterface extends Application {
                          return;
                 	}
                     profilController.updateFavoriteCity( userId,currentIndex, textField.getText());
+                    System.out.println(userId);
+                    System.out.println(currentIndex);
+                    System.out.println(textField.getText());
                     start(primaryStage); 
                 } catch (Exception ex) {
                     ex.printStackTrace();

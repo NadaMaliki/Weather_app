@@ -183,7 +183,6 @@ public class UserPreferencesManager {
         }
         return false;
     }
-
     // Méthode pour supprimer une ville preferee
     public boolean removeFavoriteCity(int userId, int index) {
         if (index < 1 || index > 5) {
