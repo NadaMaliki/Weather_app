@@ -82,8 +82,8 @@ public class NotificationService {
                 String convertedTemperatureStr = String.format("%.2f", convertedTemperature);
 
                 String message = String.format(
-                    "Bonjour %s, la température moyenne du jour à %s est de %s°C et la probabilité de pluie est de %.2f%%.",
-                    userName, city, convertedTemperatureStr, rainChance
+                    "Bonjour %s, la température moyenne du jour à %s est de %s %s et la probabilité de pluie est de %.2f%%.",
+                    userName, city, convertedTemperatureStr,unit, rainChance
                 );
 
                 sendDesktopNotification("Daily Notification Météo", message);

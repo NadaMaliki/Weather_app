@@ -2,8 +2,8 @@ package Services.Alert;
 
 import java.util.*;
 import Dao.DBConnexion;
-import Dao.DatabaseManager;
 import Dao.UserPreferencesManager;
+import Dao.DatabaseManager;
 import Services.Api.*;
 import Model.Forecast;
 import Model.User;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class EmailService {
     private final DatabaseManager dbManager;
     private final Set<String> failedEmails = new HashSet<>();
-    ScheduledExecutorService scheduler;
+    public ScheduledExecutorService scheduler;
 
     
     public EmailService(DBConnexion dbConnexion) {

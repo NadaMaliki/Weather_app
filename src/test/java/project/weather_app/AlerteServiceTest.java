@@ -39,13 +39,7 @@ class AlerteServiceTest {
 		emailServiceMock = mock(EmailService.class); 
 		notificationServiceMock = mock(NotificationService.class); 
 		schedulerMock = mock(ScheduledExecutorService.class); 
-		alerteService = new AlerteService(); 
-		alerteService.dbConnexion = dbConnexionMock; 
-		alerteService.dbManager = dbManagerMock; 
-		alerteService.userpreferences = userPreferencesMock; 
-		alerteService.weatherApi = weatherApiMock; 
-		alerteService.emailService = emailServiceMock; 
-		alerteService.notificationService = notificationServiceMock;
+	
 		
 		alerteService = new AlerteService(dbConnexionMock, dbManagerMock, userPreferencesMock, weatherApiMock, emailServiceMock, notificationServiceMock, schedulerMock);
 		
@@ -54,12 +48,7 @@ class AlerteServiceTest {
 
 	@Test
     void testAfficherDailyAlerteUtilisateur_Alerte1() throws ClassNotFoundException, SQLException {
-        // Création de l'objet à tester
-        AlerteService AlerteService = new AlerteService();
-        AlerteService.dbManager = dbManagerMock;
-        AlerteService.userpreferences = userPreferencesMock;
-        AlerteService.emailservice = emailServiceMock;
-        AlerteService.notificationservice = notificationServiceMock;
+        
 
         // Configuration des mocks
         User mockUser = new User();
@@ -68,22 +57,16 @@ class AlerteServiceTest {
         when(userPreferencesMock.getDefaultCity(1)).thenReturn("Paris");
 
         // Appel de la méthode à tester
-        AlerteService.afficherDailyAlerteUtilisateur(1);
+        alerteService.afficherDailyAlerteUtilisateur(1);
 
         // Vérifications
-        verify(emailServiceMock, times(1)).scheduleDailyEmailNotifications(1, 18, 33, "Paris");
+        verify(emailServiceMock, times(1)).scheduleDailyEmailNotifications(1, 8, 00, "Paris");
         verify(notificationServiceMock, never()).scheduleDailyNotifications(anyInt(), anyInt(), anyInt(), anyString());
     }
 
     @Test
     public void testAfficherDailyAlerteUtilisateur_Alerte2() throws ClassNotFoundException, SQLException {
-    	// Création de l'objet à tester
-        AlerteService AlerteService = new AlerteService();
-        AlerteService.dbManager = dbManagerMock;
-        AlerteService.userpreferences = userPreferencesMock;
-        AlerteService.emailservice = emailServiceMock;
-        AlerteService.notificationservice = notificationServiceMock;
-
+  
         // Configuration des mocks
         User mockUser = new User();
         mockUser.setAlerte(2); // Pour tester les deux cas
@@ -91,20 +74,14 @@ class AlerteServiceTest {
         when(userPreferencesMock.getDefaultCity(1)).thenReturn("Paris");
 
         // Appel de la méthode à tester
-        AlerteService.afficherDailyAlerteUtilisateur(1);
+        alerteService.afficherDailyAlerteUtilisateur(1);
 
         verify(emailServiceMock, never()).scheduleDailyEmailNotifications(anyInt(), anyInt(), anyInt(), anyString());
-        verify(notificationServiceMock, times(1)).scheduleDailyNotifications(1, 18, 33, "Paris");
+        verify(notificationServiceMock, times(1)).scheduleDailyNotifications(1, 8, 00, "Paris");
     }
 
     @Test
     public void testAfficherDailyAlerteUtilisateur_Alerte3() throws ClassNotFoundException, SQLException {
-    	// Création de l'objet à tester
-        AlerteService AlerteService = new AlerteService();
-        AlerteService.dbManager = dbManagerMock;
-        AlerteService.userpreferences = userPreferencesMock;
-        AlerteService.emailservice = emailServiceMock;
-        AlerteService.notificationservice = notificationServiceMock;
         
         int userId = 1;
         User mockUser = new User();
@@ -112,20 +89,14 @@ class AlerteServiceTest {
         when(dbManagerMock.getUserById(1)).thenReturn(mockUser);
         when(userPreferencesMock.getDefaultCity(1)).thenReturn("Paris");
 
-        AlerteService.afficherDailyAlerteUtilisateur(1);
+        alerteService.afficherDailyAlerteUtilisateur(1);
 
-        verify(emailServiceMock, times(1)).scheduleDailyEmailNotifications(eq(userId), anyInt(), anyInt(), eq("Paris"));
-        verify(notificationServiceMock, times(1)).scheduleDailyNotifications(eq(userId), anyInt(), anyInt(), eq("Paris"));
+        verify(emailServiceMock, times(1)).scheduleDailyEmailNotifications(1, 8, 00, "Paris");
+        verify(notificationServiceMock, times(1)).scheduleDailyNotifications(1, 8, 00, "Paris");
     }
 
     @Test
     public void testAfficherDailyAlerteUtilisateur_NoAlerte() throws ClassNotFoundException, SQLException {
-    	// Création de l'objet à tester
-        AlerteService AlerteService = new AlerteService();
-        AlerteService.dbManager = dbManagerMock;
-        AlerteService.userpreferences = userPreferencesMock;
-        AlerteService.emailservice = emailServiceMock;
-        AlerteService.notificationservice = notificationServiceMock;
         
         int userId = 1;
         User user = new User();

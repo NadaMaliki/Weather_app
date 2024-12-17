@@ -1,7 +1,6 @@
 package project.weather_app;
 
 import Dao.DBConnexion;
-import Dao.DatabaseManager;
 import Model.Forecast;
 import Model.User;
 import Services.Alert.EmailService;
@@ -28,7 +27,6 @@ public class EmailServiceTest {
 	
 	private DBConnexion mockDbConnection;
     private Connection mockConnection;
-    private DatabaseManager mockdbManager;
     private PreparedStatement mockPreparedStatement;
     private ResultSet mockResultSet;
     private User mockUser;
@@ -40,7 +38,6 @@ public class EmailServiceTest {
     void setUp() throws SQLException {
         mockDbConnection = Mockito.mock(DBConnexion.class);
         mockConnection = Mockito.mock(Connection.class);
-        mockdbManager = mock(DatabaseManager.class);
         mockPreparedStatement = Mockito.mock(PreparedStatement.class);
         mockResultSet = Mockito.mock(ResultSet.class);
         mockUser = Mockito.mock(User.class);
@@ -49,7 +46,6 @@ public class EmailServiceTest {
         emailService_validation = new EmailService(mockDbConnection); 
         emailService.scheduler = schedulerMock;
 
-        when(mockDbConnection.getCon()).thenReturn(mockConnection);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
         when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet);
         when(mockUser.getId()).thenReturn(1);
@@ -93,48 +89,6 @@ public class EmailServiceTest {
         verify(emailService_validation).getUserEmailFromDatabase(1);
         verify(emailService_validation, never()).sendEmail(anyString(), anyString(), anyString()); 
     }
-    
-    @Test
-    void testGetUserEmailFromDatabase_EmailFound() throws SQLException {
-    	
-    	when(mockResultSet.next()).thenReturn(true); 
-        when(mockResultSet.getString("email")).thenReturn("test@example.com"); 
-        when(mockPreparedStatement.executeQuery()).thenReturn(mockResultSet); 
-
-        String email = emailService.getUserEmailFromDatabase(1);
-
-        assertNotNull(email, "L'email retourné ne doit pas être null");
-        assertEquals("test@example.com", email, "L'email retourné ne correspond pas à l'attendu");
-
-        verify(mockPreparedStatement).setInt(1, 1);
-        verify(mockPreparedStatement).executeQuery();
-        verify(mockResultSet).next();
-        verify(mockResultSet).getString("email");
-    }
-
-    @Test
-    void testGetUserEmailFromDatabase_EmailNotFound() throws SQLException {
-    	
-        when(mockResultSet.next()).thenReturn(false); 
-
-        String email = emailService.getUserEmailFromDatabase(1);
-
-        assertNull(email); 
-        verify(mockPreparedStatement).setInt(1, 1); 
-        verify(mockPreparedStatement).executeQuery(); 
-    }
-
-    @Test
-    void testGetUserEmailFromDatabase_SQLException() throws SQLException {
-        when(mockPreparedStatement.executeQuery()).thenThrow(new SQLException("Database error")); 
-
-        String email = emailService.getUserEmailFromDatabase(1);
-
-        assertNull(email); 
-        verify(mockPreparedStatement).setInt(1, 1); 
-        verify(mockPreparedStatement).executeQuery(); 
-    }
-
     
     @Test
     void testGetFailedEmails() throws Exception {

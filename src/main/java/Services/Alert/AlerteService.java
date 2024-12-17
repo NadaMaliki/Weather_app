@@ -7,21 +7,20 @@ import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import Services.Api.*;
-import Dao.DBConnexion;
-import Dao.DatabaseManager;
-import Dao.UserPreferencesManager;
 import Model.User;
+import Services.Api.*;
+import Dao.*;
+
 
 public class AlerteService {
 
-	private final EmailService emailService;
-	private final NotificationService notificationService;
-	private final ScheduledExecutorService scheduler;
-	private final DBConnexion dbConnexion;
-	private final DatabaseManager dbManager;
-	private final UserPreferencesManager userPreferences;
-	private final WeatherApi weatherApi;
+	public final EmailService emailService;
+	public final NotificationService notificationService;	
+	public final ScheduledExecutorService scheduler;
+	public final DBConnexion dbConnexion;
+	public final DatabaseManager dbManager;
+	public final UserPreferencesManager userPreferences;
+	public final WeatherApi weatherApi;
 
 	// Constructeur principal
 	public AlerteService(DBConnexion dbConnexion, DatabaseManager dbManager, UserPreferencesManager userPreferences,
@@ -35,6 +34,8 @@ public class AlerteService {
 		this.notificationService = notificationService;
 		this.scheduler = scheduler != null ? scheduler : Executors.newScheduledThreadPool(1);
 	}
+	
+	
 	public void afficherDailyAlerteUtilisateur(int userId) throws ClassNotFoundException {
         User user = dbManager.getUserById(userId);
         if (user == null) {
@@ -48,8 +49,8 @@ public class AlerteService {
             return;
         }
 
-        int hour = 4;
-        int minute = 58;
+        int hour = 8;
+        int minute = 00;
 
         if (user.getAlerte() == 1 || user.getAlerte() == 3) {
             emailService.scheduleDailyEmailNotifications(userId, hour, minute, city);
